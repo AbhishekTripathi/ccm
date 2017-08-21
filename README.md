@@ -11,10 +11,10 @@ There are two parts included with the installer:
 * vsCCM; a Visual Studio 2008, 2010 and 2012 add-in that will add a new toolbar for integrating CCM with Visual Studio.
 
 ## Command line usage
-To CCM.exe, simply use one of the two modes for invocation:
+To use CCM.exe, simply use one of the two modes for invocation:
 
 * CCM.exe ```<path-to-config-file>```
-* CCM.exe ```<folder-path-to-analyze>``` ```[/xml]``` ```[/ignorecases]``` ```[v]``` 
+* CCM.exe ```<folder-path-to-analyze>``` ```[/xml]``` ```[/ignorecases]``` ```[/threshold=5]``` ```[/nummetrics=10]``` ```[v]``` 
 
 ### Arguments
 ```
@@ -23,6 +23,8 @@ To CCM.exe, simply use one of the two modes for invocation:
    <folder-path-to-analyze> Path to directory which ccm will analyze.
    /xml                     Output results as XML (this parameter only valid if a config file is not passed in).
    /ignorecases             Don't count each case in switch block as a branching point (only valid if config file is not passed in).
+   /threshold=5             Ignore units with metrics lower than assigned value.
+   /nummetrics=10           Only report top 10 metrics (see numMetrics element in configuration file)
    /v                       Print the version number of ccm.exe.
 ```
 
@@ -43,6 +45,7 @@ Below is an example of a configuration file.
    <suppressMethodSignatures>yes</suppressMethodSignatures>
    <switchStatementBehavior>IgnoreCases</switchStatementBehavior>
    <numMetrics>30</numMetrics>
+   <threshold>6</threshold>
    <fileExtensions>
      <fileExtension>.cxx</fileExtension>
    </fileExtensions>
@@ -52,10 +55,11 @@ Below is an example of a configuration file.
 * ```<exclude>``` element can be used to exclude files and/or folders from analysis.
 * ```<analyze>``` element specified which folders to analyze. All paths in the ```<folder>``` element is relative to the location of the configuration file.
 * ```<recursive>``` element tells CCM to traverse folders or not.
-* ```<outputter>``` element tells CCM how to output the data. Valid values are 'XML', 'Tabbed', 'Text'.
+* ```<outputter>``` element tells CCM how to output the data. Valid values are 'XML', 'Tabbed', 'Text', 'CSV'
 * ```<suppressMethodSignatures>``` set to 'yes' and CCM will only print the name of the method and not the full signature.
 * ```<switchStatementBehavior>``` set to 'IgnoreCases' and CCM will not count each case statement in switch blocks as a branching point.
 * ```<numMetrics>``` tells CCM how many metrics that should be reported. Only the top x functions will be reported.
+* ```<threshold>``` tells CCM to ignore units with a complexity less than configured value.
 * ```<fileExtensions>``` can be used to add additional file extensions for analysis. Per default, these are included: .h, .cpp, .c, .hpp, .cs, .js and .ts 
 
 ### Example output

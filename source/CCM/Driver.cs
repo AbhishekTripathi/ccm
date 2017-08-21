@@ -40,7 +40,7 @@ namespace CCM
     {
       this.threadCount = Environment.ProcessorCount;
       this.threadSemaphore = new Semaphore(this.threadCount, this.threadCount);
-      this.listener = new SortedListener(this.configFile.NumMetrics, this.configFile.ExcludeFunctions);
+      this.listener = new SortedListener(this.configFile.NumMetrics, this.configFile.ExcludeFunctions, this.configFile.Threshold);
     }
 
     private void AnalyzeFilestream(object context)
@@ -148,10 +148,9 @@ namespace CCM
         {
           if (IsValidFile(fileName))
           {
-            StreamReader fileStream = new StreamReader(fileName);
-            string name = fileName.Substring(basePath.Length);
-
-            StartAnalyze(fileStream, name);
+            StartAnalyze(
+                new StreamReader(fileName),
+                fileName);
           }
         }
       }

@@ -9,60 +9,87 @@ namespace CCMTests
     [TestClass]
     public class ProgramTests
     {
-      [TestMethod]
-      public void TestFolderArgumentCreatesDefaultSettings()
-      {
-         XmlDocument doc =
-          Program.LoadConfiguration(new string[] { "folder_to_analyze" });
+        [TestMethod]
+        public void TestFolderArgumentCreatesDefaultSettings()
+        {
+            XmlDocument doc =
+             Program.LoadConfiguration(new string[] { "folder_to_analyze" });
 
-         ConfigurationFile config = new ConfigurationFile(doc);
-         Assert.AreEqual("folder_to_analyze", config.AnalyzeFolders[0]);
-         Assert.AreEqual(30, config.NumMetrics);
-         Assert.AreEqual(CCMOutputter.TextOutputType, config.OutputType);
-      }
+            ConfigurationFile config = new ConfigurationFile(doc);
+            Assert.AreEqual("folder_to_analyze", config.AnalyzeFolders[0]);
+            Assert.AreEqual(30, config.NumMetrics);
+            Assert.AreEqual(CCMOutputter.TextOutputType, config.OutputType);
+        }
 
-      [TestMethod]
-      public void TestCreateConfigurationFromArgsPassingOnlyPathOutputDoesNotOutputAsXML()
-      {
-        XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code" });
+        [TestMethod]
+        public void TestCreateConfigurationFromArgsPassingOnlyPathOutputDoesNotOutputAsXML()
+        {
+            XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code" });
 
-        ConfigurationFile config = new ConfigurationFile(doc);
+            ConfigurationFile config = new ConfigurationFile(doc);
 
-        Assert.AreEqual(CCMOutputter.TextOutputType, config.OutputType);
-        Assert.AreEqual("c:\\code", config.AnalyzeFolders[0]);
-      }
+            Assert.AreEqual(CCMOutputter.TextOutputType, config.OutputType);
+            Assert.AreEqual("c:\\code", config.AnalyzeFolders[0]);
+        }
 
-      [TestMethod]
-      public void TestCreateConfigurationFromArgsWithXMLSwitchOutputAsXML()
-      {
-        XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/xml" });
+        [TestMethod]
+        public void TestCreateConfigurationFromArgsWithXMLSwitchOutputAsXML()
+        {
+            XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/xml" });
 
-        ConfigurationFile config = new ConfigurationFile(doc);
+            ConfigurationFile config = new ConfigurationFile(doc);
 
-        Assert.AreEqual(CCMOutputter.XmlOutputType, config.OutputType);
-        Assert.AreEqual("c:\\code", config.AnalyzeFolders[0]);
-      }
+            Assert.AreEqual(CCMOutputter.XmlOutputType, config.OutputType);
+            Assert.AreEqual("c:\\code", config.AnalyzeFolders[0]);
+        }
 
-      [TestMethod]
-      public void TestCreateConfigurationFromArgsWithTabbedOutput()
-      {
-        XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/tabbedOutput" });
+        [TestMethod]
+        public void TestCreateNumMetricsFromArgs()
+        {
+            XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/nummetrics=15" });
 
-        ConfigurationFile config = new ConfigurationFile(doc);
+            ConfigurationFile config = new ConfigurationFile(doc);
 
-        Assert.AreEqual(CCMOutputter.TabbedOutputType, config.OutputType);
-        Assert.AreEqual("c:\\code", config.AnalyzeFolders[0]);
-      }
+            Assert.AreEqual(15, config.NumMetrics);
+        }
 
-      [TestMethod]
-      public void TestCreateConfigurationFromArgsWithIgnoreCases()
-      {
-        XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/ignorecases" });
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestThrowsOnUnknownArgument()
+        {
+            XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/somenewstrangeone" });
+        }
 
-        ConfigurationFile config = new ConfigurationFile(doc);
+        [TestMethod]
+        public void TestCreateConfigurationFromArgsWithTabbedOutput()
+        {
+            XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/tabbedOutput" });
 
-        Assert.AreEqual(ParserSwitchBehavior.IgnoreCases, config.SwitchStatementBehavior);
-      }
+            ConfigurationFile config = new ConfigurationFile(doc);
+
+            Assert.AreEqual(CCMOutputter.TabbedOutputType, config.OutputType);
+            Assert.AreEqual("c:\\code", config.AnalyzeFolders[0]);
+        }
+
+        [TestMethod]
+        public void TestCreateConfigUsingThresholdArgument()
+        {
+            XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/threshold=10" });
+
+            ConfigurationFile config = new ConfigurationFile(doc);
+
+            Assert.AreEqual(10, config.Threshold);
+        }
+
+        [TestMethod]
+        public void TestCreateConfigurationFromArgsWithIgnoreCases()
+        {
+            XmlDocument doc = Program.CreateConfigurationFromArgs(new string[] { "c:\\code", "/ignorecases" });
+
+            ConfigurationFile config = new ConfigurationFile(doc);
+
+            Assert.AreEqual(ParserSwitchBehavior.IgnoreCases, config.SwitchStatementBehavior);
+        }
 
     }
 }
